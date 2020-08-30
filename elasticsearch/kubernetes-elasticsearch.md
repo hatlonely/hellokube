@@ -29,7 +29,7 @@
     ```
 2. 创建 `PersistentVolumeClaim`
     ```shell script
-    cat > pv-elasticsearch.yaml <<EOF
+    cat > pvc-elasticsearch.yaml <<EOF
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:

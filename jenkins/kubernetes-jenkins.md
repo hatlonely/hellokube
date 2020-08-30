@@ -33,7 +33,7 @@
     ```
 3. 创建 `PersistentVolumeClaim`
     ```shell script
-    cat > pv-jenkins.yaml <<EOF
+    cat > pvc-jenkins.yaml <<EOF
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
