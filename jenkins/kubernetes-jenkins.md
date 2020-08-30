@@ -9,7 +9,7 @@
     ```
 2. 创建 `PersistentVolume`
     ```shell script
-    cat > pv-jenkins.yaml <<EOF
+    kubectl apply -f - <<EOF
     apiVersion: v1
     kind: PersistentVolume
     metadata:
@@ -29,11 +29,10 @@
         path: /nfs/data/jenkin
         server: 192.168.0.101
     EOF
-    kubectl apply -f pv-jenkins.yaml
     ```
 3. 创建 `PersistentVolumeClaim`
     ```shell script
-    cat > pvc-jenkins.yaml <<EOF
+    kubectl apply -f - <<EOF
     apiVersion: v1
     kind: PersistentVolumeClaim
     metadata:
@@ -49,7 +48,6 @@
       storageClassName: jenkins
       selector:
     EOF
-    kubectl apply -f pvc-jenkins.yaml
     ```
 4. 安装
     ```shell script
@@ -87,4 +85,3 @@
 ## 链接
 
 - helm chart: <https://hub.helm.sh/charts/stable/jenkins>
-- elasticsearch：<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/install-elasticsearch.html>
