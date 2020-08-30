@@ -62,6 +62,8 @@
 4. 卸载
     ```shell script
     helm delete elasticsearch -n prod
+    kubectl delete -n prod pvc elasticsearch-pvc
+    kubectl delete -n prod pv elasticsearch
     ```
 
 ## 链接
