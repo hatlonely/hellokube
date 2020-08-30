@@ -17,7 +17,7 @@
       accessModes:
         - ReadWriteMany
       persistentVolumeReclaimPolicy: Recycle
-      storageClassName: slow
+      storageClassName: elasticsearch
       mountOptions:
         - hard
         - nfsvers=3
@@ -42,7 +42,7 @@
       resources:
         requests:
           storage: 50Gi
-      storageClassName: slow
+      storageClassName: elasticsearch
       selector:
     EOF
     kubectl apply -f pvc-elasticsearch.yaml
