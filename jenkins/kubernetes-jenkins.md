@@ -10,24 +10,13 @@
 2. 创建 `PersistentVolume`
     ```shell script
     kubectl apply -f - <<EOF
-    apiVersion: v1
-    kind: PersistentVolume
+    apiVersion: storage.k8s.io/v1
+    kind: StorageClass
     metadata:
       name: jenkins
-    spec:
-      capacity:
-        storage: 50Gi
-      volumeMode: Filesystem
-      accessModes:
-        - ReadWriteMany
-      persistentVolumeReclaimPolicy: Recycle
-      storageClassName: jenkins
-      mountOptions:
-        - hard
-        - nfsvers=3
-      nfs:
-        path: /nfs/data/jenkin
-        server: 192.168.0.101
+    provisioner: cluster.local/nfs-client-provisioner # deployment's env PROVISIONER_NAME'
+    parameters:
+      archiveOnDelete: "true"
     EOF
     ```
 3. 创建 `PersistentVolumeClaim`
@@ -79,7 +68,7 @@
     ```shell script
     helm delete -n prod jenkins
     kubectl delete -n prod pvc jenkins-pvc
-    kubectl delete -n prod pv jenkins
+    kubectl delete sc jenkins
     ```
    
 ## 链接
