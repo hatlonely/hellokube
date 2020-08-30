@@ -3,7 +3,7 @@
 ## PersistentVolume
 
 ```shell script
-cat > slow.yaml <<EOF
+kubectl apply -f - <<EOF
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -23,13 +23,12 @@ spec:
     path: /nfs/data/slow
     server: 192.168.0.101
 EOF
-kubectl apply -f slow.yaml
 ```
 
 ## StorageClass
 
 ```shell script
-cat > slow.yaml <<EOF
+kubectl apply -f - <<EOF
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
@@ -38,6 +37,5 @@ provisioner: cluster.local/nfs-client-provisioner # deployment's env PROVISIONER
 parameters:
   archiveOnDelete: "false"
 EOF
-kubectl apply -f slow.yaml
 ```
 
