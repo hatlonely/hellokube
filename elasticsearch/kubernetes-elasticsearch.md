@@ -56,12 +56,12 @@
         --set backup.image.tag=7.9.0 \
         --set data.replicas=2 \
         --set data.persistence.enabled=true \
-        --set data.persistence.storageClass=elasticsearch \
+        --set data.persistence.storageClass=elasticsearch-data \
         --set data.persistence.size=45G \
         --set data.persistence.accessMode=ReadWriteMany \
         --set master.replicas=2 \
         --set master.persistence.enabled=true \
-        --set master.persistence.storageClass=elasticsearch \
+        --set master.persistence.storageClass=elasticsearch-master \
         --set master.persistence.size=4G \
         --set master.persistence.accessMode=ReadWriteMany \
         --set client.ingress.enabled=true \
@@ -74,7 +74,8 @@
     helm delete -n prod elasticsearch
     kubectl delete -n prod pvc data-elasticsearch-master-0
     kubectl delete -n prod pvc data-elasticsearch-data-0
-    kubectl delete -n prod pv elasticsearch
+    kubectl delete -n prod pv elasticsearch-master
+    kubectl delete -n prod pv elasticsearch-data
     ```
 
 ## 链接
