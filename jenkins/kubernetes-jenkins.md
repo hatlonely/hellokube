@@ -56,6 +56,7 @@
     kubectl create namespace prod
     helm install -n prod jenkins stable/jenkins \
         --set backup.image.repo=registry.docker.com/jenkins \
+        --set backup.image.tag=2.60.3 \
         --set persistence.existingClaim=jenkins-pvc \
         --set master.ingress.enabled=true \
         --set master.ingress.hostName=k8s.jenkins.hatlonely.com \
