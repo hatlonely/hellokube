@@ -53,7 +53,7 @@
     ```shell script
     helm install -n prod elasticsearch stable/elasticsearch \
         --set backup.image.repo=docker.elastic.co/elasticsearch/elasticsearch \
-        --set backup.image.tag=7.9.0 \
+        --set backup.image.tag=6.8.2 \
         --set data.replicas=2 \
         --set data.persistence.enabled=true \
         --set data.persistence.storageClass=elasticsearch-data \
