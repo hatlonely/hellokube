@@ -21,7 +21,7 @@
       accessModes:
         - ReadWriteMany
       persistentVolumeReclaimPolicy: Recycle
-      storageClassName: slow
+      storageClassName: jenkins
       mountOptions:
         - hard
         - nfsvers=3
@@ -46,7 +46,7 @@
       resources:
         requests:
           storage: 50Gi
-      storageClassName: slow
+      storageClassName: jenkins
       selector:
     EOF
     kubectl apply -f pvc-jenkins.yaml
@@ -79,9 +79,12 @@
     ```
 10. 卸载
     ```shell script
-    helm delete jenkins -n prod
+    helm delete -n prod jenkins
+    kubectl delete -n prod pvc jenkins-pvc
+    kubectl delete -n prod pv jenkins
     ```
    
 ## 链接
 
 - helm chart: <https://hub.helm.sh/charts/stable/jenkins>
+- elasticsearch：<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/install-elasticsearch.html>
