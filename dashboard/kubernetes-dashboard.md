@@ -24,9 +24,9 @@
 ## helm 安装
 
 1. 生成证书
-    ```sh
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./k8s-dashboard.key -out ./k8s-dashboard.crt -subj "/CN=192.168.0.10,192.168.0.11,192.168.0.12,192.168.0.13"
-    kubectl -n kube-system create secret tls k8s-dashboard-secret --key ./k8s-dashboard.key --cert ./k8s-dashboard.crt
+     ```sh
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./k8s.key -out ./k8s.crt -subj "/CN=192.168.0.10,192.168.0.11,192.168.0.12"
+    kubectl -n kube-system create secret tls k8s-secret --key ./k8s.key --cert ./k8s.crt
     ```
 2. 安装
     ```sh
@@ -36,17 +36,17 @@
       --set replicaCount=2 \
       --set ingress.enabled=true \
       --set ingress.hosts={k8s.dashboard.hatlonely.com} \
-      --set ingress.tls\[0\].secretName=k8s-dashboard-secret \
+      --set ingress.tls\[0\].secretName=k8s-secret \
       --set ingress.tls\[0\].hosts={k8s.dashboard.hatlonely.com} \
       --set rbac.create=true \
       --set rbac.clusterAdminRole=true
     ```
-3. Mac 打开【钥匙串访问】，切换到【系统】面板，将 `k8s-dashboard.crt` 证书拖进去
+3. Mac 打开【钥匙串访问】，切换到【系统】面板，将 `k8s.crt` 证书拖进去
 4. `kubectl get ingress -A` 查看 ingress 的外部端点
     ```sh
     kube-system   k8s-dashboard-kubernetes-dashboard   k8s.dashboard.hatlonely.com   192.168.0.11   80, 443   9h
     ```
-5. 设置 host，`sudo vi /etc/hosts`，添加行 `49 192.168.0.11 k8s.dashboard.hatlonely.com`
+5. 设置 host，`sudo vi /etc/hosts`，添加行 `192.168.0.11 k8s.dashboard.hatlonely.com`
 6. 浏览器打开 `k8s.dashboard.hatlonely.com` 即可访问
 7. 获取凭证
     ```sh
