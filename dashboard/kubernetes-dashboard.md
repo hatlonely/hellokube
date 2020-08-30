@@ -1,4 +1,4 @@
-# dashboard
+# kubernetes dashboard
 
 ## yaml 安装
 
