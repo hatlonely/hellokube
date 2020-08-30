@@ -3,7 +3,7 @@
 ## 安装
 
 1. 生成证书
-    ```sh
+    ```shell script
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./k8s.key -out ./k8s.crt -subj "/CN=192.168.0.10,192.168.0.11,192.168.0.12"
     kubectl -n kube-system create secret tls k8s-secret --key ./k8s.key --cert ./k8s.crt
     ```
@@ -18,7 +18,7 @@
     ```
 3. Mac 打开【钥匙串访问】，切换到【系统】面板，将 `k8s.crt` 证书拖进去
 4. `kubectl get ingress -A` 查看 ingress 的外部端点
-    ```sh
+    ```shell script
     monitoring    prometheus-operator-grafana          k8s.grafana.hatlonely.com     192.168.0.11   80, 443   3m46s
     ```
 5. 设置 host，`sudo vi /etc/hosts`，添加行 `192.168.0.11 k8s.grafana.hatlonely.com`
