@@ -5,11 +5,33 @@
 
 1. 创建 `PersistentVolume`
     ```shell script
-    cat > pv-elasticsearch.yaml <<EOF
+    cat > pv-elasticsearch-master.yaml <<EOF
     apiVersion: v1
     kind: PersistentVolume
     metadata:
-      name: elasticsearch
+      name: elasticsearch-master
+    spec:
+      capacity:
+        storage: 5Gi
+      volumeMode: Filesystem
+      accessModes:
+        - ReadWriteMany
+      persistentVolumeReclaimPolicy: Recycle
+      storageClassName: elasticsearch-master
+      mountOptions:
+        - hard
+        - nfsvers=3
+      nfs:
+        path: /nfs/data/elasticsearch/master
+        server: 192.168.0.101
+    EOF
+    kubectl apply -f pv-elasticsearch-master.yaml
+   
+   cat > pv-elasticsearch-data.yaml <<EOF
+    apiVersion: v1
+    kind: PersistentVolume
+    metadata:
+      name: elasticsearch-data
     spec:
       capacity:
         storage: 50Gi
@@ -17,43 +39,31 @@
       accessModes:
         - ReadWriteMany
       persistentVolumeReclaimPolicy: Recycle
-      storageClassName: elasticsearch
+      storageClassName: elasticsearch-data
       mountOptions:
         - hard
         - nfsvers=3
       nfs:
-        path: /nfs/data/elasticsearch
+        path: /nfs/data/elasticsearch/data
         server: 192.168.0.101
     EOF
-    kubectl apply -f pv-elasticsearch.yaml
-    ```
-2. 创建 `PersistentVolumeClaim`
-    ```shell script
-    cat > pvc-elasticsearch.yaml <<EOF
-    apiVersion: v1
-    kind: PersistentVolumeClaim
-    metadata:
-      namespace: prod
-      name: elasticsearch-pvc
-    spec:
-      accessModes:
-        - ReadWriteMany
-      volumeMode: Filesystem
-      resources:
-        requests:
-          storage: 50Gi
-      storageClassName: elasticsearch
-      selector:
-    EOF
-    kubectl apply -f pvc-elasticsearch.yaml
+    kubectl apply -f pv-elasticsearch-data.yaml
     ```
 3. 安装
     ```shell script
     helm install -n prod elasticsearch stable/elasticsearch \
         --set backup.image.repo=docker.elastic.co/elasticsearch/elasticsearch \
         --set backup.image.tag=7.9.0 \
+        --set data.replicas=2 \
+        --set data.persistence.enabled=true \
+        --set data.persistence.storageClass=elasticsearch \
+        --set data.persistence.size=45G \
+        --set data.persistence.accessMode=ReadWriteMany \
         --set master.replicas=2 \
-        --set persistence.existingClaim=elasticsearch-pvc \
+        --set master.persistence.enabled=true \
+        --set master.persistence.storageClass=elasticsearch \
+        --set master.persistence.size=4G \
+        --set master.persistence.accessMode=ReadWriteMany \
         --set client.ingress.enabled=true \
         --set client.ingress.hosts={k8s.elasticsearch.hatlonely.com} \
         --set client.ingress.tls\[0\].secretName=k8s-secret \
@@ -61,8 +71,9 @@
     ```
 4. 卸载
     ```shell script
-    helm delete elasticsearch -n prod
-    kubectl delete -n prod pvc elasticsearch-pvc
+    helm delete -n prod elasticsearch
+    kubectl delete -n prod pvc data-elasticsearch-master-0
+    kubectl delete -n prod pvc data-elasticsearch-data-0
     kubectl delete -n prod pv elasticsearch
     ```
 
