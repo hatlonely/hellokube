@@ -44,5 +44,5 @@
 
 ## 链接
 
-- helm chart: <https://github.com/helm/charts/tree/master/stable/elasticsearch>
+- helm chart: <https://github.com/elastic/helm-charts/tree/master/elasticsearch>
 - elasticsearch：<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/install-elasticsearch.html>
