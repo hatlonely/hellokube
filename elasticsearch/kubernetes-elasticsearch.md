@@ -34,7 +34,6 @@
         --set podSecurityContext.runAsUser=0 \
         --set podSecurityContext.fsGroup=0
     ```
-
 3. 卸载
     ```shell script
     helm delete -n prod elasticsearch
