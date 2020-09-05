@@ -2,7 +2,6 @@
 
 ## 安装
 
-
 1. 创建 `PersistentVolume`
     ```shell script
     kubectl apply -f - <<EOF
@@ -27,30 +26,21 @@
     ```
 2. 安装
     ```shell script
-    helm install -n prod elasticsearch stable/elasticsearch \
-        --set backup.image.repo=docker.elastic.co/elasticsearch/elasticsearch \
-        --set backup.image.tag=6.8.2 \
-        --set data.replicas=2 \
-        --set data.persistence.enabled=true \
-        --set data.persistence.storageClass=elasticsearch-data \
-        --set data.persistence.size=50G \
-        --set data.persistence.accessMode=ReadWriteOnce \
-        --set master.replicas=2 \
-        --set master.persistence.enabled=true \
-        --set master.persistence.storageClass=elasticsearch-master \
-        --set master.persistence.size=4G \
-        --set master.persistence.accessMode=ReadWriteOnce \
-        --set client.ingress.enabled=true \
-        --set client.ingress.hosts={k8s.elasticsearch.hatlonely.com} \
-        --set client.ingress.tls\[0\].secretName=k8s-secret \
-        --set client.ingress.tls\[0\].hosts={k8s.elasticsearch.hatlonely.com}
+    helm repo add elastic https://helm.elastic.co
+    helm install -n prod elasticsearch elastic/elasticsearch \
+        --set image=docker.elastic.co/elasticsearch/elasticsearch \
+        --set imageTag=7.9.0 \
+        --set securityContext.runAsNonRoot=false \
+        --set podSecurityContext.runAsUser=0 \
+        --set podSecurityContext.fsGroup=0
     ```
+
 3. 卸载
     ```shell script
     helm delete -n prod elasticsearch
-    kubectl delete -n prod pvc data-elasticsearch-master-0
-    kubectl delete -n prod pvc data-elasticsearch-data-0
-    kubectl delete sc elasticsearch-data elasticsearch-master
+    kubectl delete pvc elasticsearch-master-elasticsearch-master-0 -n prod
+    kubectl delete pvc elasticsearch-master-elasticsearch-master-1 -n prod
+    kubectl delete pvc elasticsearch-master-elasticsearch-master-2 -n prod
     ```
 
 ## 链接
