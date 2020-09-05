@@ -4,9 +4,10 @@
 
 1. 安装
     ```shell script
-    helm install -n prod redis stable/redis \
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+    helm install -n prod redis bitnami/redis \
         --set image.repository=bitnami/redis \
-        --set image.tag=6.0 \
+        --set image.tag=6.0.7-debian-10-r1 \
         --set cluster.enabled=true \
         --set cluster.slaveCount=1 \
         --set usePassword=true \
@@ -26,5 +27,5 @@
 
 ## 链接
 
-- helm: <https://github.com/helm/charts/tree/master/stable/redis>
+- helm: <https://github.com/bitnami/charts/tree/master/bitnami/redis>
 
