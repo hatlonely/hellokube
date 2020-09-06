@@ -29,18 +29,22 @@
     kubectl -n kube-system create secret tls k8s-secret --key ./k8s.key --cert ./k8s.crt
     ```
 2. 安装
-    ```sh
-    helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
-    helm install -n kube-system k8s-dashboard kubernetes-dashboard/kubernetes-dashboard \
-      --set image.tag=v2.0.1 \
-      --set replicaCount=2 \
-      --set ingress.enabled=true \
-      --set ingress.hosts={k8s.dashboard.hatlonely.com} \
-      --set ingress.tls\[0\].secretName=k8s-secret \
-      --set ingress.tls\[0\].hosts={k8s.dashboard.hatlonely.com} \
-      --set rbac.create=true \
-      --set rbac.clusterAdminRole=true
-    ```
+```shell script
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+
+helm upgrade -n kube-system k8s-dashboard kubernetes-dashboard/kubernetes-dashboard \
+    --set image.tag=v2.0.1 \
+    --set replicaCount=2 \
+    --set ingress.enabled=true \
+    --set ingress.hosts={k8s.dashboard.hatlonely.com} \
+    --set ingress.tls\[0\].secretName=kubernetes-dashboard-tls \
+    --set ingress.tls\[0\].hosts={k8s.dashboard.hatlonely.com} \
+    --set ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
+    --set ingress.annotations."kubernetes\.io/tls-acme"=\"true\" \
+    --set ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"=HTTPS \
+    --set rbac.create=true \
+    --set rbac.clusterAdminRole=true
+```
 3. Mac 打开【钥匙串访问】，切换到【系统】面板，将 `k8s.crt` 证书拖进去
 4. `kubectl get ingress -A` 查看 ingress 的外部端点
     ```sh
