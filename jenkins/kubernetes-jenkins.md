@@ -67,10 +67,10 @@
 10. 卸载
     ```shell script
     helm delete -n prod jenkins
-    kubectl delete -n prod pvc jenkins-pvc
+    kubectl delete pvc -n prod jenkins-pvc
     kubectl delete sc jenkins
     ```
-   
+
 ## 链接
 
 - helm chart: <https://hub.helm.sh/charts/stable/jenkins>

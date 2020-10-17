@@ -19,10 +19,13 @@
 2. 获取 redis 密码
     ```shell script
     REDIS_PASSWORD=$(kubectl get secret --namespace prod redis -o jsonpath="{.data.redis-password}" | base64 --decode)
+    echo $REDIS_PASSWORD
     ```
 3. 卸载
     ```shell script
     helm delete -n prod redis
+    kubectl delete pvc -n prod redis-data-redis-master-0
+    kubectl delete pvc -n prod redis-data-redis-slave-0
     ```
 
 ## 链接

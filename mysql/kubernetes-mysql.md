@@ -21,6 +21,7 @@
 2. 获取 root 密码
     ```shell script
     MYSQL_ROOT_PASSWORD=$(kubectl get secret -n prod mysql -o jsonpath="{.data.mysql-root-password}" | base64 -d)
+    echo $MYSQL_ROOT_PASSWORD
     ```
 3. 卸载
     ```shell script
