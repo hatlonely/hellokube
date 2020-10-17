@@ -4,9 +4,9 @@
 
 1. 安装
     ```shell script
-    helm upgrade -n kube-system nfs-client-provisioner stable/nfs-client-provisioner \
+    helm install -n kube-system nfs-client-provisioner stable/nfs-client-provisioner \
         --set nfs.server=192.168.0.101 \
-        --set nfs.path=/nfs/data \
+        --set nfs.path=/nfs/data2 \
         --set nfs.mountOptions\[0\]=hard \
         --set nfs.mountOptions\[1\]="nfsvers=3" \
         --set storageClass.defaultClass=true
