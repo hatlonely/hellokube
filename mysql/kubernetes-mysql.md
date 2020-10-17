@@ -10,7 +10,7 @@
         --set busybox.image=busybox \
         --set busybox.tag=1.32 \
         --set persistence.enabled=true \
-        --set persistence.size=30Gi \
+        --set persistence.size=50Gi \
         --set metrics.enabled=true \
         --set metrics.image=prom/mysqld-exporter \
         --set metrics.imageTag=v0.10.0 \
