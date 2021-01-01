@@ -6,18 +6,11 @@
     ```shell script
     helm repo add bitnami https://charts.bitnami.com/bitnami
     helm install -n prod mongo bitnami/mongodb \
-        --set architecture=replicaset \
-        --set replicaCount=3 \
-        --set persistence.enbale=true \
-        --set metrics.enabled=true \
-        --set podSecurityContext.runAsUser=501 \
-        --set containerSecurityContext.runAsUser=501
+        --set architecture=standalone
     ```
 2. mongo 访问地址
     ```
-    mongo-mongodb-0.mongo-mongodb-headless.prod.svc.cluster.local:27017
-    mongo-mongodb-1.mongo-mongodb-headless.prod.svc.cluster.local:27017
-    mongo-mongodb-2.mongo-mongodb-headless.prod.svc.cluster.local:27017
+    mongo-mongodb.prod.svc.cluster.local
     ```
 3. 密码 
     ```
@@ -27,11 +20,15 @@
     ```
     kubectl run --namespace prod mongo-mongodb-client --rm --tty -i --restart='Never' --env="MONGODB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD" --image docker.io/bitnami/mongodb:4.4.3-debian-10-r0 --command -- bash
 
-    mongo admin --host "mongo-mongodb-0.mongo-mongodb-headless.prod.svc.cluster.local:27017,mongo-mongodb-1.mongo-mongodb-headless.prod.svc.cluster.local:27017,mongo-mongodb-2.mongo-mongodb-headless.prod.svc.cluster.local:27017" --authenticationDatabase admin -u root -p $MONGODB_ROOT_PASSWORD
+    mongo admin --host "mongo-mongodb" --authenticationDatabase admin -u root -p $MONGODB_ROOT_PASSWORD
     ```
 5. 卸载
     ```
     helm delete mongo -n prod
+    ```
+6. 清理 pvc
+    ```
+    kubectl delete pvc mongo-mongodb -n prod
     ```
 
 ## 链接
