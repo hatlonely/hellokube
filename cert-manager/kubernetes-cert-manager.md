@@ -19,7 +19,7 @@
 3. 部署 issuer 服务
     ```shell script
     kubectl apply -n cert-manager -f - <<EOF
-    apiVersion: cert-manager.io/v1alpha2
+    apiVersion: cert-manager.io/v1
     kind: ClusterIssuer
     metadata:
       name: letsencrypt-prod
