@@ -1,0 +1,41 @@
+name: prometheus
+
+dep:
+
+env:
+  default:
+  imm_dev_hl:
+    NAME: "prometheus"
+    NAMESPACE: "imm-dev-hl"
+    K8S_CONTEXT: "weboffice-hl-2"
+
+task:
+  install:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo update
+      - |
+        helm install -n "${NAMESPACE}" "${NAME}" prometheus-community/prometheus \
+          --set kubeStateMetrics.enabled=false \
+          --set server.persistentVolume.storageClass=alicloud-disk-ssd \
+          --set server.persistentVolume.size=20Gi \
+          --set alertmanager.persistentVolume.storageClass=alicloud-disk-ssd \
+          --set alertmanager.persistentVolume.size=20Gi
+      - helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics
+      - |
+        helm install --verify=false -n "${NAMESPACE}" "kube-state-metrics" kube-state-metrics/kube-state-metrics \
+          --set image.repository="bitnami/kube-state-metrics" \
+          --set image.tag="1.9.8" \
+          --set prometheus.monitor.enabled=true \
+          --set prometheus.monitor.namespace=${NAMESPACE}
+      - |
+        helm install --verify=false -n "${NAMESPACE}" "node-exporter" prometheus-community/prometheus-node-exporter \
+          --set prometheus.monitor.enabled=true \
+          --set prometheus.monitor.namespace=${NAMESPACE}
+  delete:
+    step:
+      - helm delete -n "${NAMESPACE}" "${NAME}"
+      - helm delete -n "${NAMESPACE}" kube-state-metrics
+      - helm delete -n "${NAMESPACE}" node-exporter
