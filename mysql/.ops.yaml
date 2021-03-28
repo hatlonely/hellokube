@@ -1,0 +1,30 @@
+name: mysql
+
+dep:
+
+env:
+  default:
+  imm_dev_hl:
+    NAME: "mysql"
+    NAMESPACE: "imm-dev-hl"
+    K8S_CONTEXT: "weboffice-hl-2"
+
+task:
+  install:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - |
+        helm install -n "${NAMESPACE}" "${NAME}" stable/mysql \
+          --set image=mysql \
+          --set imageTag=5.7.30 \
+          --set busybox.image=busybox \
+          --set busybox.tag=1.32 \
+          --set persistence.enabled=true \
+          --set persistence.size=20Gi \
+          --set metrics.enabled=true \
+          --set metrics.image=prom/mysqld-exporter \
+          --set metrics.imageTag=v0.10.0
+      - kubectl get secret -n "${NAMESPACE}" "${NAME}" -o jsonpath="{.data.mysql-root-password}" | base64 -d
+  delete:
+    step:
+      - helm delete -n "${NAMESPACE}" "${NAME}"

@@ -1,0 +1,32 @@
+name: "php-mysql-admin"
+
+dep:
+
+env:
+  default:
+    NAME: "php-mysql-admin"
+  imm_dev_hl:
+    NAMESPACE: "imm-dev-hl"
+    K8S_CONTEXT: "weboffice-hl-2"
+
+task:
+  install:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - helm repo add bitnami https://charts.bitnami.com/bitnami
+      - |
+        helm install -n "${NAMESPACE}" "${NAME}" bitnami/phpmyadmin \
+          --set db.host=mysql \
+          --set image.repository=bitnami/phpmyadmin \
+          --set image.tag=5.0.2-debian-10-r146 \
+          --set ingress.enabled=true \
+          --set ingress.hostname=k8s.phpmyadmin.hatlonely.com \
+          --set ingress.hosts[0].name=k8s.phpmyadmin.hatlonely.com \
+          --set ingress.hosts[0].tls=true \
+          --set ingress.annotations."kubernetes\.io\/ingress\.class"=nginx \
+          --set ingress.annotations."kubernetes\.io\/tls\-acme"="\"true\"" \
+          --set metrics.enabled=true
+  delete:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - helm delete -n "${NAMESPACE}" "${NAME}"
