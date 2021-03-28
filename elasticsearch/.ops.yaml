@@ -1,0 +1,42 @@
+name: "elasticsearch"
+
+dep:
+
+env:
+  default:
+    NAME: "elasticsearch"
+  imm_dev_hl:
+    NAMESPACE: "imm-dev-hl"
+    K8S_CONTEXT: "weboffice-hl-2"
+
+task:
+  install:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - |
+        kubectl apply -f - <<EOF
+        kind: StorageClass
+        apiVersion: storage.k8s.io/v1beta1
+        metadata:
+          name: elasticsearch
+        provisioner: alicloud/disk
+        reclaimPolicy: Delete
+        volumeBindingMode: Immediate
+        allowVolumeExpansion: true
+        parameters:
+          type: cloud_ssd
+          regionId: cn-shanghai
+          zoneId: cn-shanghai-f
+        EOF
+      - helm repo add elastic https://helm.elastic.co
+      - |
+        helm install -n "${NAMESPACE}" "${NAME}" elastic/elasticsearch \
+          --set image=docker.elastic.co/elasticsearch/elasticsearch \
+          --set imageTag=7.9.0 \
+          --set persistence.enable=true \
+          --set volumeClaimTemplate.storageClassName=elasticsearch
+  delete:
+    step:
+      - test "${K8S_CONTEXT}" == "$(kubectl config current-context)" || exit 1
+      - helm delete -n "${NAMESPACE}" "${NAME}"
+      - kubectl delete sc elasticsearch
